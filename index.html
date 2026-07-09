@@ -1,135 +1,86 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>찬양 가사 자동 슬라이드 v2.0</title>
-  <style>
-    :root{--bg:#080b12;--panel:#111827;--panel2:#172033;--line:#263247;--text:#f8fafc;--muted:#94a3b8;--accent:#38bdf8;--ok:#22c55e;--warn:#f59e0b;--danger:#ef4444;--pink:#ec4899;}
-    *{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI","Pretendard",sans-serif;height:100vh;overflow:hidden} button,input,textarea,select{font-family:inherit} button{cursor:pointer;border:0;border-radius:12px;font-weight:800;padding:10px 14px;background:var(--panel2);color:var(--text)} button:hover{filter:brightness(1.12)} .btn-accent{background:var(--accent);color:#02111f}.btn-ok{background:var(--ok);color:#052e16}.btn-warn{background:var(--warn);color:#1f1300}.btn-danger{background:var(--danger);color:#fff}.btn-ghost{background:transparent;border:1px solid var(--line);color:var(--muted)}
-    .app{height:100vh;display:flex;flex-direction:column}.top{height:58px;background:#0d1320;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 18px}.brand{font-size:18px;font-weight:900}.brand span{color:var(--accent)}.small{font-size:12px;color:var(--muted)}
-    .setup{flex:1;overflow:auto;padding:22px}.wrap{max-width:1180px;margin:0 auto}.grid{display:grid;grid-template-columns:1fr 360px;gap:18px}.card{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:18px;margin-bottom:16px;box-shadow:0 8px 24px rgba(0,0,0,.18)}.card h2{margin:0 0 12px;font-size:18px}.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.field{width:100%;background:#070b13;border:1px solid var(--line);border-radius:12px;color:var(--text);padding:12px;outline:none}.field:focus{border-color:var(--accent)}textarea.field{min-height:96px;resize:vertical;line-height:1.55}.hint{color:var(--muted);font-size:13px;line-height:1.5}.slide-card{display:grid;grid-template-columns:88px 1fr;gap:12px;background:#0b1020;border:1px solid var(--line);border-radius:16px;padding:14px;margin-bottom:12px}.slide-num{height:88px;border-radius:14px;background:#050814;border:1px solid var(--line);display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:950;color:var(--accent)}.slide-meta{display:grid;grid-template-columns:1.2fr .7fr .55fr .55fr;gap:8px;margin-bottom:8px}.mini{font-size:12px;padding:8px}.check{display:flex;align-items:center;gap:7px;font-size:13px;color:var(--muted);font-weight:700}.image-preview{width:100%;height:90px;object-fit:contain;background:#050814;border:1px solid var(--line);border-radius:12px}.side-list{max-height:calc(100vh - 220px);overflow:auto}.song-title{font-weight:900;color:var(--accent);margin:10px 0 6px}.pill{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:#0b1020;border-radius:999px;padding:5px 9px;color:var(--muted);font-size:12px;font-weight:800}
-    .live{display:none;flex:1;position:relative;background:#020409;align-items:center;justify-content:center;overflow:hidden}.slide-stage{width:100%;height:100%;display:flex;align-items:center;justify-content:center;padding:24px 390px 78px 24px}.slide-box{width:min(1200px,100%);aspect-ratio:16/9;background:#111827;border-radius:10px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;box-shadow:0 20px 70px rgba(0,0,0,.5)}.slide-box img{width:100%;height:100%;object-fit:contain}.generated-slide{width:100%;height:100%;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:70px;background:radial-gradient(circle at center,rgba(56,189,248,.14),transparent 55%),linear-gradient(135deg,#09111f,#030712);}.generated-slide .gt{font-size:34px;color:var(--accent);font-weight:900;margin-bottom:18px}.generated-slide .gv{font-size:24px;color:var(--warn);font-weight:900;margin-bottom:34px}.generated-slide .gl{font-size:58px;font-weight:950;line-height:1.35;white-space:pre-line;text-shadow:0 4px 16px #000}.monitor{position:absolute;right:22px;top:22px;width:340px;background:rgba(17,24,39,.92);border:1px solid var(--line);border-radius:18px;padding:16px;backdrop-filter:blur(10px);box-shadow:0 15px 40px rgba(0,0,0,.45)}.mon-row{display:flex;justify-content:space-between;gap:10px;font-size:13px;margin:9px 0}.mon-val{font-weight:900;color:var(--accent);text-align:right}.bar{height:11px;background:#050814;border:1px solid var(--line);border-radius:99px;overflow:hidden}.bar>div{height:100%;background:linear-gradient(90deg,var(--accent),var(--ok));width:0%;transition:width .2s}.preview{margin-top:12px;min-height:58px;background:#050814;border:1px solid var(--line);border-radius:12px;padding:10px;color:var(--warn);font-size:13px;line-height:1.45;word-break:break-all}.queue{margin-top:12px;max-height:190px;overflow:auto}.qitem{display:flex;justify-content:space-between;gap:8px;padding:8px;border:1px solid var(--line);border-radius:10px;background:#080d18;margin-bottom:6px;font-size:12px}.qitem.on{border-color:var(--accent);color:var(--accent);font-weight:900;background:rgba(56,189,248,.08)}.bottom{height:62px;background:#0d1320;border-top:1px solid var(--line);display:flex;align-items:center;justify-content:center;gap:10px;padding:0 12px}.jump-input{width:92px;text-align:center;background:#050814;border:1px solid var(--line);border-radius:12px;color:var(--text);font-size:18px;font-weight:900;padding:10px}.toast{position:fixed;left:50%;bottom:82px;transform:translateX(-50%);background:#111827;border:1px solid var(--line);padding:12px 18px;border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,.4);z-index:9999;font-weight:800}.hidden{display:none!important}@media(max-width:980px){.grid{grid-template-columns:1fr}.slide-stage{padding:14px 14px 78px}.monitor{display:none}.slide-meta{grid-template-columns:1fr 1fr}.generated-slide .gl{font-size:34px}}
-  </style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>찬양 자동 슬라이드 v2</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<div class="app">
-  <div class="top">
-    <div><div class="brand">찬양 가사 자동 슬라이드 <span>v2.0</span></div><div class="small">Chrome 권장 · GitHub Pages 실행 가능 · 단일 index.html</div></div>
-    <div class="row"><button class="btn-ghost" onclick="showSetup()">편집</button><button class="btn-accent" onclick="startLive()">실행</button></div>
-  </div>
+  <header class="topbar">
+    <div>
+      <h1>찬양 자동 슬라이드 <span>v2</span></h1>
+      <p>75% 진행 후 마지막 가사 감지 · 절/후렴/슬라이드 번호 점프</p>
+    </div>
+    <div class="top-actions">
+      <button id="btnSave" class="secondary">저장</button>
+      <button id="btnLoad" class="secondary">불러오기</button>
+      <button id="btnExport" class="secondary">파일 내보내기</button>
+      <label class="secondary file-label">파일 가져오기<input id="importFile" type="file" accept=".autoslide,.json"></label>
+      <button id="btnStart" class="primary">실행 시작</button>
+    </div>
+  </header>
 
-  <main id="setup" class="setup">
-    <div class="wrap">
-      <div class="grid">
-        <section>
-          <div class="card">
-            <h2>1. 콘티 입력</h2>
-            <p class="hint">예: <b>1. 내 모습 이대로 (4)</b> 처럼 곡명 뒤에 슬라이드 수를 적고, 아래 버튼을 누르면 슬라이드 입력칸이 자동 생성됩니다.</p>
-            <textarea id="conti" class="field" placeholder="1. 내 모습 이대로 (4)&#10;2. 꽃들도 (3)&#10;3. 은혜로다 (2)"></textarea>
-            <div class="row" style="margin-top:10px"><button class="btn-accent" onclick="buildFromConti()">콘티로 슬라이드 만들기</button><button class="btn-warn" onclick="addSlide()">슬라이드 추가</button><button class="btn-ghost" onclick="clearAll()">전체 초기화</button></div>
-          </div>
+  <main id="setupScreen" class="setup">
+    <section class="card">
+      <h2>1. 콘티 입력</h2>
+      <p class="hint">예: 내 모습 이대로 (4) / 꽃들도 (2) 처럼 곡명 뒤에 슬라이드 수를 적어주세요.</p>
+      <textarea id="contiText" rows="5">내 모습 이대로 (4)
+꽃들도 (2)
+은혜로다 (2)</textarea>
+      <button id="btnBuild" class="primary small">콘티로 슬라이드 만들기</button>
+    </section>
 
-          <div class="card">
-            <h2>2. 슬라이드별 가사 입력</h2>
-            <p class="hint">각 슬라이드의 마지막 줄을 부르면 다음 슬라이드로 넘어갑니다. 후렴은 체크해두면 후렴 첫 가사 인식 시 이동 대상이 됩니다.</p>
-            <div id="slides"></div>
-          </div>
-        </section>
-
-        <aside>
-          <div class="card">
-            <h2>저장 / 불러오기</h2>
-            <div class="row"><button class="btn-ok" onclick="saveLocal()">브라우저 저장</button><button class="btn-warn" onclick="loadLocal()">불러오기</button></div>
-            <hr style="border:0;border-top:1px solid var(--line);margin:14px 0">
-            <div class="row"><button onclick="exportFile()">파일 내보내기</button><button onclick="document.getElementById('importFile').click()">파일 가져오기</button><input id="importFile" type="file" accept=".praise,.json" class="hidden" onchange="importFile(event)"></div>
-          </div>
-          <div class="card">
-            <h2>자동 인식 기준</h2>
-            <div class="mon-row"><span>자동 넘김 진행률</span><b class="mon-val">75%</b></div>
-            <div class="mon-row"><span>넘김 조건</span><b class="mon-val">75% + 마지막 가사</b></div>
-            <div class="mon-row"><span>점프 조건</span><b class="mon-val">75% + 첫 가사</b></div>
-            <p class="hint">마지막 부분을 부르기 전에는 다음 슬라이드로 넘어가지 않도록 설계했습니다.</p>
-          </div>
-          <div class="card side-list">
-            <h2>슬라이드 목록</h2>
-            <div id="slideList"></div>
-          </div>
-        </aside>
+    <section class="card">
+      <div class="section-head">
+        <h2>2. 슬라이드별 가사 입력</h2>
+        <button id="btnAddSlide" class="secondary small">슬라이드 추가</button>
       </div>
-    </div>
+      <div id="slideEditor" class="slide-editor"></div>
+    </section>
   </main>
 
-  <main id="live" class="live">
-    <div class="slide-stage"><div id="slideBox" class="slide-box"></div></div>
-    <div class="monitor">
-      <div class="row" style="justify-content:space-between"><b>System Status</b><span id="clock" class="small"></span></div>
-      <div class="mon-row"><span>마이크</span><span id="micState" class="mon-val">OFF</span></div>
-      <div class="mon-row"><span>현재 슬라이드</span><span id="liveNo" class="mon-val">-</span></div>
-      <div class="mon-row"><span>곡 / 절</span><span id="liveTitle" class="mon-val">-</span></div>
-      <div class="mon-row"><span>진행률</span><span id="progressText" class="mon-val">0%</span></div>
-      <div class="bar"><div id="progressBar"></div></div>
-      <div class="mon-row"><span>마지막 감지</span><span id="endKey" class="mon-val">-</span></div>
-      <div id="voicePreview" class="preview">음성 인식 시작 후 여기에 인식 내용이 표시됩니다.</div>
-      <div id="liveQueue" class="queue"></div>
-    </div>
+  <main id="liveScreen" class="live hidden">
+    <section class="stage">
+      <div class="slide-meta" id="liveMeta">1 / 1</div>
+      <div class="lyrics" id="liveLyrics"></div>
+    </section>
+
+    <aside class="monitor">
+      <h2>System Status</h2>
+      <div class="row"><span>마이크</span><strong id="micState">OFF</strong></div>
+      <div class="row"><span>현재 슬라이드</span><strong id="slideCount">0 / 0</strong></div>
+      <div class="row"><span>곡</span><strong id="songTitle">-</strong></div>
+
+      <label class="jump-label">슬라이드 번호 이동</label>
+      <input id="jumpNumber" class="jump-input" type="number" min="1" placeholder="번호 입력 후 Enter">
+
+      <div class="progress-box">
+        <div class="progress-head"><span>가사 진행률</span><strong id="progressText">0%</strong></div>
+        <div class="progress"><div id="progressBar"></div></div>
+        <p class="hint">75% 이후 마지막 가사를 불러야 다음 슬라이드로 넘어갑니다.</p>
+      </div>
+
+      <div class="preview" id="speechPreview">음성 인식 내용이 여기에 표시됩니다.</div>
+
+      <div class="live-buttons">
+        <button id="btnPrev" class="secondary">이전</button>
+        <button id="btnMic" class="primary">음성 인식 시작</button>
+        <button id="btnNext" class="secondary">다음</button>
+        <button id="btnBack" class="secondary">편집으로</button>
+        <button id="btnProjector" class="secondary">프로젝터</button>
+      </div>
+
+      <div id="slideList" class="slide-list"></div>
+    </aside>
   </main>
 
-  <div class="bottom">
-    <button onclick="prevSlide()">이전</button>
-    <input id="jumpNo" class="jump-input" type="number" min="1" placeholder="번호" title="슬라이드 번호 입력 후 Enter">
-    <button onclick="jumpToNumber()">이동</button>
-    <button class="btn-accent" id="micBtn" onclick="toggleMic()">🎙️ 음성 인식 시작</button>
-    <button onclick="nextSlide()">다음</button>
-    <button class="btn-ok" onclick="openProjector()">프로젝터</button>
-  </div>
-</div>
-<script>
-const AUTO_PROGRESS=75;
-let slides=[]; let currentIndex=0; let recognition=null; let listening=false; let speechBuffer=''; let lastFinal=''; let lastActionTime=0; let projector=null;
-const $=id=>document.getElementById(id);
-function normalize(t){return String(t||'').replace(/[\s\n\r\t.,!?~`'"“”‘’()\[\]{}<>:;·ㆍ…\-_/\\|+=*&^%$#@]/g,'').toLowerCase();}
-function lines(t){return String(t||'').split(/\n+/).map(v=>v.trim()).filter(Boolean)}
-function makeGrams(text,n=2){const s=normalize(text); const arr=[]; for(let i=0;i<=s.length-n;i++) arr.push(s.slice(i,i+n)); return [...new Set(arr)].filter(v=>v.length===n)}
-function firstKey(text){const l=lines(text); return normalize(l[0]||text).slice(0,18)}
-function endKeys(text){const s=normalize(text); const lens=[22,18,14,10,7,5]; return lens.map(n=>s.slice(-n)).filter(v=>v.length>=4)}
-function esc(s){return String(s??'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]))}
-function toast(msg){const d=document.createElement('div');d.className='toast';d.textContent=msg;document.body.appendChild(d);setTimeout(()=>d.remove(),2100)}
-function collect(){slides.forEach((s,i)=>{s.song=$(`song${i}`)?.value.trim()||s.song||'';s.part=$(`part${i}`)?.value.trim()||s.part||'';s.lyrics=$(`lyrics${i}`)?.value.trim()||s.lyrics||'';s.chorus=$(`chorus${i}`)?.checked||false;});prepareSlides();renderList();}
-function prepareSlides(){slides.forEach(s=>{s.clean=normalize(s.lyrics);s.grams=makeGrams(s.lyrics,2);s.first=firstKey(s.lyrics);s.ends=endKeys(s.lyrics);});}
-function parseContiLine(line){let t=line.replace(/^\s*\d+[.)\-\s]+/,'').trim();let m=t.match(/(.+?)\s*[\(\[]\s*(\d+)\s*[\)\]]\s*$/);return {title:(m?m[1]:t).trim(), count:m?parseInt(m[2],10):1};}
-function buildFromConti(){const data=$('conti').value.split('\n').map(v=>v.trim()).filter(Boolean).map(parseContiLine); if(!data.length){toast('콘티를 먼저 입력해 주세요.');return} slides=[]; data.forEach(song=>{for(let i=1;i<=song.count;i++) slides.push({song:song.title,part:`${i}절`,lyrics:'',chorus:false,img:''});}); renderEditor();toast('콘티로 슬라이드를 만들었습니다.');}
-function addSlide(){collect();slides.push({song:slides.at(-1)?.song||'',part:'',lyrics:'',chorus:false,img:''});renderEditor();}
-function clearAll(){if(!confirm('전체 내용을 지울까요?'))return;slides=[];$('slides').innerHTML='';renderList();}
-function renderEditor(){const box=$('slides');box.innerHTML='';slides.forEach((s,i)=>{const div=document.createElement('div');div.className='slide-card';div.innerHTML=`<div class="slide-num">${i+1}</div><div><div class="slide-meta"><input id="song${i}" class="field mini" placeholder="곡명" value="${esc(s.song)}"><input id="part${i}" class="field mini" placeholder="절수 예: 1절/후렴" value="${esc(s.part)}"><label class="check"><input id="chorus${i}" type="checkbox" ${s.chorus?'checked':''}>후렴</label><input type="file" accept="image/*" class="field mini" onchange="loadImage(event,${i})"></div><textarea id="lyrics${i}" class="field" placeholder="이 슬라이드에 표시될 가사를 입력하세요.\n마지막 줄을 부르면 다음 슬라이드로 넘어갑니다.">${esc(s.lyrics)}</textarea><div class="row" style="margin-top:8px"><button class="btn-ghost" onclick="moveSlide(${i},-1)">위로</button><button class="btn-ghost" onclick="moveSlide(${i},1)">아래로</button><button class="btn-danger" onclick="deleteSlide(${i})">삭제</button>${s.img?'<span class="pill">이미지 있음</span>':''}</div></div>`;box.appendChild(div);});prepareSlides();renderList();}
-function loadImage(e,i){const f=e.target.files[0]; if(!f)return; const r=new FileReader(); r.onload=()=>{slides[i].img=r.result;toast('이미지를 넣었습니다.');renderEditor();}; r.readAsDataURL(f);}
-function deleteSlide(i){collect();slides.splice(i,1);renderEditor();}
-function moveSlide(i,dir){collect();const j=i+dir;if(j<0||j>=slides.length)return;[slides[i],slides[j]]=[slides[j],slides[i]];renderEditor();}
-function renderList(){const box=$('slideList'); if(!box)return; box.innerHTML=''; let last=''; slides.forEach((s,i)=>{if(s.song!==last){last=s.song; const h=document.createElement('div');h.className='song-title';h.textContent=s.song||'곡명 없음';box.appendChild(h)} const p=document.createElement('div');p.className='qitem'+(i===currentIndex?' on':'');p.onclick=()=>{currentIndex=i;showLiveSlide();};p.innerHTML=`<span>${i+1}. ${esc(s.part||'')}</span><span>${s.chorus?'후렴':''}</span>`;box.appendChild(p);});}
-function saveLocal(){collect();localStorage.setItem('praiseAutoSlideV2',JSON.stringify({conti:$('conti').value,slides}));toast('저장했습니다.');}
-function loadLocal(){const raw=localStorage.getItem('praiseAutoSlideV2');if(!raw){toast('저장된 내용이 없습니다.');return} const d=JSON.parse(raw);$('conti').value=d.conti||'';slides=d.slides||[];renderEditor();toast('불러왔습니다.');}
-function exportFile(){collect();const blob=new Blob([JSON.stringify({conti:$('conti').value,slides},null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='praise_project.praise';a.click();URL.revokeObjectURL(a.href);}
-function importFile(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const d=JSON.parse(r.result);$('conti').value=d.conti||'';slides=d.slides||[];renderEditor();toast('가져왔습니다.')}catch(err){toast('파일을 읽을 수 없습니다.')}};r.readAsText(f);e.target.value='';}
-function startLive(){collect();if(!slides.length){toast('슬라이드를 먼저 만들어 주세요.');return}$('setup').style.display='none';$('live').style.display='flex';currentIndex=Math.min(currentIndex,slides.length-1);showLiveSlide();}
-function showSetup(){collect();$('live').style.display='none';$('setup').style.display='block';renderEditor();}
-function generatedHTML(s){return `<div class="generated-slide"><div class="gt">${esc(s.song||'')}</div><div class="gv">${esc(s.part||'')}</div><div class="gl">${esc(s.lyrics||'가사를 입력하세요.')}</div></div>`}
-function showLiveSlide(){prepareSlides(); const s=slides[currentIndex]; if(!s)return; $('slideBox').innerHTML=s.img?`<img src="${s.img}">`:generatedHTML(s); $('liveNo').textContent=`${currentIndex+1} / ${slides.length}`; $('liveTitle').textContent=`${s.song||'-'} ${s.part||''}`; $('endKey').textContent=s.ends?.[0]||'-'; speechBuffer=''; lastFinal=''; updateProgress(0); renderLiveQueue(); renderList(); if(projector&&!projector.closed){projector.document.body.innerHTML=`<style>body{margin:0;background:#000;display:flex;align-items:center;justify-content:center;height:100vh;overflow:hidden}.box{width:100vw;height:100vh;display:flex;align-items:center;justify-content:center}img{max-width:100%;max-height:100%;object-fit:contain}.generated-slide{width:100vw;height:100vh;color:white;font-family:system-ui,"Pretendard";display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;background:linear-gradient(135deg,#09111f,#030712);padding:70px;box-sizing:border-box}.gt{font-size:44px;color:#38bdf8;font-weight:900;margin-bottom:20px}.gv{font-size:30px;color:#f59e0b;font-weight:900;margin-bottom:38px}.gl{font-size:72px;line-height:1.35;font-weight:950;white-space:pre-line}</style><div class="box">${s.img?`<img src="${s.img}">`:generatedHTML(s)}</div>`}}
-function renderLiveQueue(){const box=$('liveQueue');box.innerHTML='';slides.forEach((s,i)=>{const d=document.createElement('div');d.className='qitem'+(i===currentIndex?' on':'');d.onclick=()=>{currentIndex=i;showLiveSlide()};d.innerHTML=`<span>${i+1}. ${esc(s.song)} ${esc(s.part)}</span><span>${s.chorus?'후렴':''}</span>`;box.appendChild(d);});}
-function updateProgress(p){p=Math.max(0,Math.min(100,Math.round(p)));$('progressText').textContent=p+'%';$('progressBar').style.width=p+'%';return p}
-function currentProgressBySpeech(sp){const s=slides[currentIndex]; if(!s||!s.grams?.length)return 0; const clean=normalize(sp); let hit=0; for(const g of s.grams){if(clean.includes(g))hit++;} return hit/s.grams.length*100;}
-function hasAnyEnd(sp){const clean=normalize(sp);const s=slides[currentIndex];return s?.ends?.some(k=>k.length>=4&&clean.includes(k));}
-function findJump(sp,progress){if(progress<AUTO_PROGRESS)return -1; const clean=normalize(sp).slice(-80); for(let i=0;i<slides.length;i++){if(i===currentIndex)continue; const s=slides[i]; if(!s.first||s.first.length<4)continue; const firstCandidates=[s.first,s.first.slice(0,14),s.first.slice(0,10),s.first.slice(0,7),s.first.slice(0,5)].filter(v=>v.length>=4); if(firstCandidates.some(k=>clean.includes(k))){return i;} } return -1;}
-function processSpeech(text){const now=Date.now(); const combined=(speechBuffer+normalize(text)).slice(-500); const progress=updateProgress(currentProgressBySpeech(combined)); $('voicePreview').textContent=text||'...'; if(now-lastActionTime<1300)return; const jump=findJump(combined,progress); if(jump>=0){lastActionTime=now;currentIndex=jump;showLiveSlide();toast(`${jump+1}번 슬라이드로 이동`);return;} if(progress>=AUTO_PROGRESS && hasAnyEnd(combined)){lastActionTime=now; if(currentIndex<slides.length-1){currentIndex++;showLiveSlide();toast('다음 슬라이드로 이동');}}}
-function initRecognition(){const SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR){toast('Chrome 브라우저에서 실행해 주세요.');return null} const r=new SR();r.lang='ko-KR';r.continuous=true;r.interimResults=true;r.onstart=()=>{$('micState').textContent='ON';$('micBtn').textContent='🛑 인식 중지';listening=true};r.onend=()=>{$('micState').textContent='OFF';$('micBtn').textContent='🎙️ 음성 인식 시작';if(listening){try{r.start()}catch(e){}}};r.onerror=e=>{console.warn(e);toast('마이크 권한 또는 브라우저 설정을 확인해 주세요.');};r.onresult=e=>{let interim='',final='';for(let i=e.resultIndex;i<e.results.length;i++){const t=e.results[i][0].transcript;if(e.results[i].isFinal)final+=t;else interim+=t;} if(final&&normalize(final)!==lastFinal){lastFinal=normalize(final);speechBuffer=(speechBuffer+lastFinal).slice(-500);} processSpeech((speechBuffer+' '+interim).trim());};return r;}
-function toggleMic(){if(!recognition)recognition=initRecognition();if(!recognition)return;if(listening){listening=false;recognition.stop();return} try{recognition.start()}catch(e){}}
-function prevSlide(){if(currentIndex>0){currentIndex--;showLiveSlide();}}
-function nextSlide(){if(currentIndex<slides.length-1){currentIndex++;showLiveSlide();}}
-function jumpToNumber(){const n=parseInt($('jumpNo').value,10); if(!n||n<1||n>slides.length){toast('올바른 슬라이드 번호를 입력해 주세요.');return} currentIndex=n-1;showLiveSlide();$('jumpNo').value='';}
-$('jumpNo').addEventListener('keydown',e=>{if(e.key==='Enter')jumpToNumber();});
-function openProjector(){projector=window.open('','praiseProjector','width=1280,height=720');showLiveSlide();}
-setInterval(()=>{$('clock').textContent=new Date().toTimeString().slice(0,8)},1000);
-window.addEventListener('keydown',e=>{if(e.target.tagName==='INPUT'||e.target.tagName==='TEXTAREA')return; if(e.key==='ArrowRight')nextSlide(); if(e.key==='ArrowLeft')prevSlide(); if(e.key===' ') {e.preventDefault();toggleMic();}});
-loadLocal(); if(!slides.length){$('conti').value='1. 내 모습 이대로 (4)\n2. 꽃들도 (3)\n3. 은혜로다 (2)';}
-</script>
+  <script src="data.js"></script>
+  <script src="matcher.js"></script>
+  <script src="storage.js"></script>
+  <script src="projector.js"></script>
+  <script src="speech.js"></script>
+  <script src="app.js"></script>
 </body>
 </html>
